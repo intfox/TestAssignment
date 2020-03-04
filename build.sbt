@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
   "io.circe"        %% "circe-core"          % circeVersion,
   "io.circe"        %% "circe-generic"       % circeVersion,
   "io.circe"        %% "circe-parser"        % circeVersion,
-  "ch.qos.logback"  % "logback-classic"      % "1.2.3"
+  "ch.qos.logback"  % "logback-classic"      % "1.2.3",
+  "org.scalatest"   %% "scalatest"           % "3.1.1" % "test"
 )
 
 scalacOptions ++= Seq("-language:higherKinds", "-Ymacro-annotations")
