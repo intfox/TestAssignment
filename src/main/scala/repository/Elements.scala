@@ -29,7 +29,7 @@ class ElementsRepository[F[_] : Sync] {
     Sync[F].delay( storage.get(name).toRight(Error.ElementWithThatNameNotExist()) ).rethrow
 
   def list(pageSize: Int, pageNumber: Int, order: Option[Sort]): F[List[Element]] = Sync[F].delay(
-    if(storage.size >= (pageNumber - 1) * pageSize) (order match {
+    if(storage.size >= (pageNumber - 1) * pageSize && pageNumber > 0) (order match {
       case Some(Sort(NAME, order)) => storage.toList.map(_._2).sortBy(_.name)(order match {
         case ASC => implicitly[Ordering[String]]
         case DESC => implicitly[Ordering[String]].reverse

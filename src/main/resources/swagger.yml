@@ -1,0 +1,107 @@
+swagger: "2.0"
+info:
+  version: "0.1"
+  title: "Test Assignment"
+tags:
+  - name: "element"
+schemes:
+  - "http"
+paths:
+  /element/{name}:
+    get:
+      tags:
+        - "element"
+      summary: "Получение элемента"
+      parameters:
+        - in: "path"
+          name: "name"
+          required: true
+          type: "string"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/Element"
+          description: "Запрошенный элемент"
+        404:
+          description: "Элемент не найден"
+    delete:
+      tags:
+        - "element"
+      summary: "Удаление элемента"
+      parameters:
+        - in: "path"
+          name: "name"
+          required: true
+          type: "string"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/Element"
+          description: "Элемент удален"
+        404:
+          description: "Элемент не найден"
+  /element:
+    post:
+      tags:
+        - "element"
+      summary: "Создание элемента"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/Element"
+      responses:
+        200:
+          description: "Элемент добавлен"
+        409:
+          description: "Элемент с таким именем уже существует"
+  /elements:
+    get:
+      tags:
+        - "element"
+      summary: "Пагинация"
+      parameters:
+        - in: "query"
+          name: "page"
+          required: true
+          type: "integer"
+        - in: "query"
+          name: "page_size"
+          required: false
+          type: "integer"
+          default: 10
+        - in: "query"
+          name: "sort_by"
+          required: false
+          type: "string"
+          enum:
+            - "name"
+            - "number"
+        - in: "query"
+          name: "order_by"
+          required: false
+          type: "string"
+          enum:
+            - "asc"
+            - "desc"
+          default: "asc"
+      responses:
+        200:
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Element"
+          description: "Массив элементов страницы"
+        404:
+          description: "Страница с таким номером не существует"
+
+definitions:
+  Element:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      number:
+        type: "integer"
+        format: "int32"

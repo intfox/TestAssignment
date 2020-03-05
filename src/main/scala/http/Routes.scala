@@ -29,7 +29,7 @@ class ElementsRoutes[F[_]: Sync](elementRepo: ElementsRepository[F]) extends Htt
   }
 
   object PageNumberMatcher extends QueryParamDecoderMatcher[Int]("page")
-  object PageSizeMatcher extends OptionalQueryParamDecoderMatcher[Int]("pageSize")
+  object PageSizeMatcher extends OptionalQueryParamDecoderMatcher[Int]("page_size")
   object SortOrderMatcher extends OptionalQueryParamDecoderMatcher[Sort.Order]("order_by")
   implicit val sortOrderDecoder: QueryParamDecoder[Sort.Order] = QueryParamDecoder[String].map{
     case "asc" => Sort.ASC
