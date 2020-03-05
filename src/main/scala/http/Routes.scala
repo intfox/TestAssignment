@@ -1,17 +1,17 @@
 package http
 
-import cats.effect.Sync
+import cats.effect.{Blocker, ContextShift, Sync}
 import cats.syntax.all._
-import org.http4s.{HttpRoutes, QueryParamDecoder}
+import org.http4s.{HttpRoutes, QueryParamDecoder, StaticFile}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.circe.CirceEntityCodec._
 import org.http4s.server.Router
 import org.http4s.implicits._
-import io.circe.syntax._
+
 import repository.{ElementsRepository, Sort}
 import domain.{Element, Error}
 
-class ElementsRoutes[F[_]: Sync](elementRepo: ElementsRepository[F]) extends Http4sDsl[F] {
+class ElementsRoutes[F[_]: Sync: ContextShift](elementRepo: ElementsRepository[F], blocker: Blocker) extends Http4sDsl[F] {
   private val routesOneElement = HttpRoutes.of[F] {
     case GET -> Root / name => elementRepo.get(name).flatMap(elem => Ok(elem)).handleErrorWith{
       case _: Error.ElementWithThatNameNotExist => NotFound()
@@ -52,8 +52,13 @@ class ElementsRoutes[F[_]: Sync](elementRepo: ElementsRepository[F]) extends Htt
       }
   }
 
-  val routes = Router(
+  private val routeSwagger = HttpRoutes.of[F] {
+    case request @ GET -> Root / "swagger" => StaticFile.fromResource("swagger-ui.html", blocker, Some(request)).getOrElseF(NotFound())
+    case request @ GET -> Root / "swagger.yaml" => StaticFile.fromResource("swagger.yaml", blocker, Some(request)).getOrElseF(NotFound())
+  }
+
+  val routes = (Router(
     "/element" -> routesOneElement,
     "/elements" -> routesElements
-  ).orNotFound
+  ) <+> routeSwagger).orNotFound
 }

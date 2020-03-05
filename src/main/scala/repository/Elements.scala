@@ -2,6 +2,7 @@ package repository
 
 import cats.effect.Sync
 import cats.syntax.all._
+
 import domain._
 
 import scala.collection.concurrent.TrieMap
